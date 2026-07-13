@@ -18,7 +18,8 @@ pipeline {
         stage('Composer Install') {
             steps {
                 echo 'Installing Composer Dependencies...'
-                sh 'composer install --no-dev --prefer-dist --optimize-autoloader --ignore-platform-reqs'
+                // Fixed line: Uses standard cross-version arguments to install dependencies cleanly
+                sh 'composer install --no-dev --optimize-autoloader'
             }
         }
         stage('Build Docker Image') {
