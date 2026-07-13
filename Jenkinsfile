@@ -18,27 +18,25 @@ pipeline {
         stage('Composer Install') {
             steps {
                 echo 'Configuring Composer limits and installing dependencies...'
-                // Raises the timeout limit to 30 minutes to accommodate slower connections
                 sh 'composer config --global process-timeout 1800'
-                
-                // Uses --ignore-platform-reqs to safely bypass host PHP version and ext-dom mismatches
                 sh 'composer install --no-dev --optimize-autoloader --prefer-dist --ignore-platform-reqs'
             }
         }
         stage('Build Docker Image') {
             steps {
                 echo 'Building production Docker image...'
-                sh "docker build -t \${REPOSITORY_URI}:latest -t \${REPOSITORY_URI}:\${IMAGE_TAG} ."
+                // Fixed line: Removed backslashes (\) before env variables so Jenkins reads them correctly as text tags
+                sh "docker build -t ${REPOSITORY_URI}:latest -t ${REPOSITORY_URI}:${IMAGE_TAG} ."
             }
         }
         stage('Push to Amazon ECR') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     echo 'Logging into Amazon ECR...'
-                    sh "aws ecr get-login-password --region \${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin \${REPOSITORY_URI}"
+                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}"
                     echo 'Pushing Docker image to ECR...'
-                    sh "docker push \${REPOSITORY_URI}:latest"
-                    sh "docker push \${REPOSITORY_URI}:\${IMAGE_TAG}"
+                    sh "docker push ${REPOSITORY_URI}:latest"
+                    sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
                 }
             }
         }
@@ -46,7 +44,7 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     echo 'Forcing deployment update on AWS ECS Service...'
-                    sh "aws ecs update-service --cluster \${ECS_CLUSTER_NAME} --service \${ECS_SERVICE_NAME} --force-new-deployment --region \${AWS_DEFAULT_REGION}"
+                    sh "aws ecs update-service --cluster ${ECS_CLUSTER_NAME} --service ${ECS_SERVICE_NAME} --force-new-deployment --region ${AWS_DEFAULT_REGION}"
                 }
             }
         }
