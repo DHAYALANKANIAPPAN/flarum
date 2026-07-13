@@ -1,14 +1,14 @@
 pipeline {
     agent any
     environment {
-        AWS_ACCOUNT_ID = '049429105451'
-        AWS_DEFAULT_REGION = 'eu-north-1'
-        IMAGE_REPO_NAME = 'flarum-app'
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}://{IMAGE_REPO_NAME}"
-        ECS_CLUSTER_NAME = 'flarum-production-cluster'
-        ECS_SERVICE_NAME = 'flarum-web-service'
-    }
+    AWS_ACCOUNT_ID = '049429105451'
+    AWS_DEFAULT_REGION = 'eu-north-1'
+    IMAGE_REPO_NAME = 'flarum-app'
+    IMAGE_TAG = "${BUILD_NUMBER}"
+    REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+    ECS_CLUSTER_NAME = 'flarum-production-cluster'
+    ECS_SERVICE_NAME = 'flarum-web-service'
+}
     stages {
         stage('Checkout Code') {
             steps {
