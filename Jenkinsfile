@@ -5,7 +5,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'eu-north-1'
         IMAGE_REPO_NAME = 'flarum-app'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}://{IMAGE_REPO_NAME}"
         ECS_CLUSTER_NAME = 'flarum-production-cluster'
         ECS_SERVICE_NAME = 'flarum-web-service'
     }
@@ -17,9 +17,12 @@ pipeline {
         }
         stage('Composer Install') {
             steps {
-                echo 'Installing Composer Dependencies...'
-                // Fixed line: Uses standard cross-version arguments to install dependencies cleanly
-                sh 'composer install --no-dev --optimize-autoloader'
+                echo 'Configuring Composer limits and installing dependencies...'
+                // Raises the process timeout limit to 30 minutes to accommodate slower connections
+                sh 'composer config --global process-timeout 1800'
+                
+                // Downloads light distribution packages directly to prevent heavy git cloning loops
+                sh 'composer install --no-dev --optimize-autoloader --prefer-dist'
             }
         }
         stage('Build Docker Image') {
