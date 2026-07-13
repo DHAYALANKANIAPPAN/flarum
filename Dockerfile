@@ -9,7 +9,7 @@ RUN apk add --no-cache \
     libzip-dev \
     icu-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) pdo_mysql gd zip icu opcache
+    && docker-php-ext-install -j$(nproc) pdo_mysql gd zip intl opcache
 
 WORKDIR /var/www/html
 
