@@ -15,7 +15,8 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html
 
-COPY .nginx.conf /etc/nginx/conf.d/default.conf
+COPY .nginx.conf /etc/nginx/conf.d/flarum-locations.conf
+COPY docker/default.conf /etc/nginx/conf.d/default.conf
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/public/assets
 
