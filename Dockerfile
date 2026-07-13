@@ -34,10 +34,11 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # 6. Apply custom Nginx and Supervisor configuration paths
 COPY .nginx.conf /etc/nginx/nginx.conf
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
+
 
 # 7. Expose the external web listener port 
 EXPOSE 80
 
 # 8. Fire up the orchestration supervisor to run both Nginx and PHP simultaneously
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
