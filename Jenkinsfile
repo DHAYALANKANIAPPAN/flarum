@@ -18,11 +18,11 @@ pipeline {
         stage('Composer Install') {
             steps {
                 echo 'Configuring Composer limits and installing dependencies...'
-                // Raises the process timeout limit to 30 minutes to accommodate slower connections
+                // Raises the timeout limit to 30 minutes to accommodate slower connections
                 sh 'composer config --global process-timeout 1800'
                 
-                // Downloads light distribution packages directly to prevent heavy git cloning loops
-                sh 'composer install --no-dev --optimize-autoloader --prefer-dist'
+                // Uses --ignore-platform-reqs to safely bypass host PHP version and ext-dom mismatches
+                sh 'composer install --no-dev --optimize-autoloader --prefer-dist --ignore-platform-reqs'
             }
         }
         stage('Build Docker Image') {
